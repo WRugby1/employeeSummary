@@ -46,7 +46,7 @@ class Mgr extends Employee {
     }
 }
 class Eng extends Employee {
-    constructor(name, id, email, github) {
+    constructor(name, id, email, role, github) {
         super(name, id, email, role);
         this.github = github
     }
@@ -55,7 +55,7 @@ class Eng extends Employee {
     }
 }
 class Int extends Employee {
-    constructor(name, id, role, email, school) {
+    constructor(name, id, email, role, school) {
         super(name, id, email, role);
         this.school = school
     }
@@ -108,14 +108,12 @@ function roleSelector(data) {
         ).then(data => {
             const manager = new Mgr(data.name, data.id, data.email, data.role, data.office)
             manager.role = "Manager";
-            console.log(manager);
             employees.push(manager);
             console.log(employees)
             if (data.addMember == "Yes") {
                 teamdata();
             }
             else {
-                render(employees);
                 writeFile();
                 console.log("Success!")
             }
@@ -150,15 +148,14 @@ function roleSelector(data) {
                 name: "addMember"
             }]
         ).then(data => {
-            const engineer = new Eng(data.name, data.id, data.role, data.email, data.github)
-            const eng = ["Engineer", engineer.name, engineer.id, engineer.email, engineer.github]
-            employees.push(JSON.stringify(eng));
+            const engineer = new Eng(data.name, data.id, data.email, data.role, data.github)
+            engineer.role = "Engineer"
+            employees.push(engineer);
             console.log(employees)
             if (data.addMember == "Yes") {
                 teamdata();
             }
             else {
-                render(employees);
                 writeFile();
                 console.log("Success!")
             }
@@ -193,15 +190,14 @@ function roleSelector(data) {
                 name: "addMember"
             }]
         ).then(data => {
-            const intern = new Int(data.name, data.id, data.role, data.email, data.github)
-            const int = ["Intern", intern.name, intern.id, intern.email, intern.school]
-            employees.push(JSON.stringify(int));
+            const intern = new Int(data.name, data.id, data.email, data.role, data.school)
+            intern.role = "Intern"
+            employees.push(intern);
             console.log(employees)
             if (data.addMember == "Yes") {
                 teamdata();
             }
             else {
-                render(employees);
                 writeFile();
                 console.log("Success!")
             }
@@ -217,7 +213,7 @@ function roleSelector(data) {
 // `output` folder. You can use the variable `outputPath` above target this location.
 // Hint: you may need to check if the `output` folder exists and create it if it
 // does not.
-function writeFile(){ fs.writeFile("team.html", html, (err) => {
+function writeFile(){ fs.writeFile(outputPath, render(employees), (err) => {
     if (err) throw (err);
 })}
 // HINT: each employee type (manager, engineer, or intern) has slightly different
