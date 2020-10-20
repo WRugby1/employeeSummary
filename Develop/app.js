@@ -207,13 +207,13 @@ function roleSelector(data) {
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
-
+const html = render(employees);
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
 // `output` folder. You can use the variable `outputPath` above target this location.
 // Hint: you may need to check if the `output` folder exists and create it if it
 // does not.
-function writeFile(){ fs.writeFile(outputPath, render(employees), (err) => {
+function writeFile(){ fs.writeFile(outputPath, html, (err) => {
     if (err) throw (err);
 })}
 // HINT: each employee type (manager, engineer, or intern) has slightly different
