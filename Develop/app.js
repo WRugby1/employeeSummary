@@ -9,57 +9,68 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const { formatWithOptions } = require("util");
 
+
+let employees = [];
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 teamdata();
 class Employee {
-    constructor(name, id, role) {
+    constructor(name, id, email, role) {
         this.name = name;
         this.id = id;
+        this.email = email;
         this.role = role
     }
-
+    getRole() {
+        return this.role;
+    }
+    getName() {
+        return this.name;
+    }
+    getEmail() {
+        return this.email;
+    }
+    getId(){
+        return this.id;
+    }
 }
 class Mgr extends Employee {
-    constructor(name, id, role, office) {
-        super(name, id, role);
+    constructor(name, id, email, role, office) {
+        super(name, id, email, role);
         this.office = office;
+    }
+    getOfficeNumber(){
+        return this.office;
     }
 }
 class Eng extends Employee {
-    constructor(github) {
+    constructor(name, id, email, github) {
+        super(name, id, email, role);
         this.github = github
+    }
+    getGithub(){
+        return this.github;
     }
 }
 class Int extends Employee {
-    constructor(school) {
+    constructor(name, id, role, email, school) {
+        super(name, id, email, role);
         this.school = school
+    }
+    getSchool(){
+        return this.school;
     }
 }
 function teamdata() {
-    inquirer.prompt([{
+    inquirer.prompt({
         // gather info, then construct the classes in the then statement
         type: "list",
         message: "Please select your role: ",
         choices: ["Manager", "Engineer", "Intern"],
         name: "role"
-    },
-    {
-        type: "input",
-        message: "Enter your name: ",
-        name: "name"
-    },
-    {
-        type: "input",
-        message: "Enter your work id: ",
-        name: "id"
-    },
-    {
-        type: "input",
-        message: "Enter your email: ",
-        name: "email"
-    }]
+    }
     ).then(data => {
         roleSelector(data);
     })
@@ -67,78 +78,135 @@ function teamdata() {
 
 function roleSelector(data) {
     if (data.role == "Manager") {
-        inquirer.prompt([{
-            type: "input",
-            message: "Enter your office number: ",
-            name: "office"
-        },
-        {
-            type: "list",
-            message: "Do you want to enter another team member? ",
-            choices: ["Yes", "No"],
-            name: "addMember"
-        }]
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "Enter your name: ",
+                name: "name"
+            },
+            {
+                type: "input",
+                message: "Enter your work id: ",
+                name: "id"
+            },
+            {
+                type: "input",
+                message: "Enter your email: ",
+                name: "email"
+            }, 
+            {
+                type: "input",
+                message: "Enter your office number: ",
+                name: "office"
+            },
+            {
+                type: "list",
+                message: "Do you want to enter another team member? ",
+                choices: ["Yes", "No"],
+                name: "addMember"
+            }]
         ).then(data => {
-            const manager = new Mgr(data.name, data.id, data.employee, data.office)
-            render(manager);
+            const manager = new Mgr(data.name, data.id, data.email, data.role, data.office)
+            manager.role = "Manager";
+            console.log(manager);
+            employees.push(manager);
+            console.log(employees)
             if (data.addMember == "Yes") {
-                //Push info to Manager class
                 teamdata();
             }
             else {
+                render(employees);
+                writeFile();
                 console.log("Success!")
             }
         })
     }
     else if (data.role == "Engineer") {
-        inquirer.prompt([{
-            type: "input",
-            message: "Enter your github URL: ",
-            name: "github"
-        },
-        {
-            type: "list",
-            message: "Do you want to enter another team member? ",
-            choices: ["Yes", "No"],
-            name: "addMember"
-        }]
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "Enter your name: ",
+                name: "name"
+            },
+            {
+                type: "input",
+                message: "Enter your work id: ",
+                name: "id"
+            },
+            {
+                type: "input",
+                message: "Enter your email: ",
+                name: "email"
+            }, 
+            {
+                type: "input",
+                message: "Enter your GitHub URL: ",
+                name: "github"
+            },
+            {
+                type: "list",
+                message: "Do you want to enter another team member? ",
+                choices: ["Yes", "No"],
+                name: "addMember"
+            }]
         ).then(data => {
-            const engineer = new Eng(data.name, data.id, data.employee, data.github)
-            render(engineer);
+            const engineer = new Eng(data.name, data.id, data.role, data.email, data.github)
+            const eng = ["Engineer", engineer.name, engineer.id, engineer.email, engineer.github]
+            employees.push(JSON.stringify(eng));
+            console.log(employees)
             if (data.addMember == "Yes") {
-                // Push info to Engineer class 
                 teamdata();
             }
             else {
+                render(employees);
+                writeFile();
                 console.log("Success!")
             }
         })
     }
     else if (data.role == "Intern") {
-        inquirer.prompt([{
-            type: "input",
-            message: "Enter your school: ",
-            name: "school"
-        },
-        {
-            type: "list",
-            message: "Do you want to enter another team member? ",
-            choices: ["Yes", "No"],
-            name: "addMember"
-        }]
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "Enter your name: ",
+                name: "name"
+            },
+            {
+                type: "input",
+                message: "Enter your work id: ",
+                name: "id"
+            },
+            {
+                type: "input",
+                message: "Enter your email: ",
+                name: "email"
+            }, 
+            {
+                type: "input",
+                message: "Enter your school: ",
+                name: "school"
+            },
+            {
+                type: "list",
+                message: "Do you want to enter another team member? ",
+                choices: ["Yes", "No"],
+                name: "addMember"
+            }]
         ).then(data => {
-            const intern = new Int(data.name, data.id, data.employee, data.school)
-            render(intern);
+            const intern = new Int(data.name, data.id, data.role, data.email, data.github)
+            const int = ["Intern", intern.name, intern.id, intern.email, intern.school]
+            employees.push(JSON.stringify(int));
+            console.log(employees)
             if (data.addMember == "Yes") {
-                // Push that info to the Intern class
                 teamdata();
             }
             else {
+                render(employees);
+                writeFile();
                 console.log("Success!")
             }
         })
-    }
-}
+}}
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
@@ -149,7 +217,9 @@ function roleSelector(data) {
 // `output` folder. You can use the variable `outputPath` above target this location.
 // Hint: you may need to check if the `output` folder exists and create it if it
 // does not.
-
+function writeFile(){ fs.writeFile("team.html", html, (err) => {
+    if (err) throw (err);
+})}
 // HINT: each employee type (manager, engineer, or intern) has slightly different
 // information; write your code to ask different questions via inquirer depending on
 // employee type.
