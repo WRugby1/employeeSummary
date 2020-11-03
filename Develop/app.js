@@ -16,53 +16,7 @@ let employees = [];
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 teamdata();
-class Employee {
-    constructor(name, id, email, role) {
-        this.name = name;
-        this.id = id;
-        this.email = email;
-        this.role = role
-    }
-    getRole() {
-        return this.role;
-    }
-    getName() {
-        return this.name;
-    }
-    getEmail() {
-        return this.email;
-    }
-    getId(){
-        return this.id;
-    }
-}
-class Mgr extends Employee {
-    constructor(name, id, email, role, office) {
-        super(name, id, email, role);
-        this.office = office;
-    }
-    getOfficeNumber(){
-        return this.office;
-    }
-}
-class Eng extends Employee {
-    constructor(name, id, email, role, github) {
-        super(name, id, email, role);
-        this.github = github
-    }
-    getGithub(){
-        return this.github;
-    }
-}
-class Int extends Employee {
-    constructor(name, id, email, role, school) {
-        super(name, id, email, role);
-        this.school = school
-    }
-    getSchool(){
-        return this.school;
-    }
-}
+
 function teamdata() {
     inquirer.prompt({
         // gather info, then construct the classes in the then statement
@@ -106,7 +60,7 @@ function roleSelector(data) {
                 name: "addMember"
             }]
         ).then(data => {
-            const manager = new Mgr(data.name, data.id, data.email, data.role, data.office)
+            const manager = new Manager(data.name, data.id, data.email, data.role, data.office)
             manager.role = "Manager";
             employees.push(manager);
             console.log(employees)
@@ -148,7 +102,7 @@ function roleSelector(data) {
                 name: "addMember"
             }]
         ).then(data => {
-            const engineer = new Eng(data.name, data.id, data.email, data.role, data.github)
+            const engineer = new Engineer(data.name, data.id, data.email, data.role, data.github)
             engineer.role = "Engineer"
             employees.push(engineer);
             console.log(employees)
@@ -190,7 +144,7 @@ function roleSelector(data) {
                 name: "addMember"
             }]
         ).then(data => {
-            const intern = new Int(data.name, data.id, data.email, data.role, data.school)
+            const intern = new Intern(data.name, data.id, data.email, data.role, data.school)
             intern.role = "Intern"
             employees.push(intern);
             console.log(employees)
@@ -207,13 +161,13 @@ function roleSelector(data) {
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
-const html = render(employees);
+
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
 // `output` folder. You can use the variable `outputPath` above target this location.
 // Hint: you may need to check if the `output` folder exists and create it if it
 // does not.
-function writeFile(){ fs.writeFile(outputPath, html, (err) => {
+function writeFile(){ fs.writeFile(outputPath, render(employees), (err) => {
     if (err) throw (err);
 })}
 // HINT: each employee type (manager, engineer, or intern) has slightly different
